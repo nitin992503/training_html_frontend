@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<body style="margin-left: 100px;">
+
+    <h1 id='heading'>Test</h1>
+
+    <div>
+        <button onclick="ToggleColor()" class="btn btn-info" id='btn'>Red</button>
+    </div>
+
+
+    <div class="container mt-3">
+
+        <div class="row">
+            <div class="col-3">
+                <input placeholder="input 1" name='input1' id='input1' />
+            </div>
+            <div class="col-3">
+                <input placeholder="input 2" name='input2' id='input2' />
+            </div>
+            <div class="col-3 text-center">
+                <button class="btn btn-success" onclick="sum()">Add</button>
+            </div>
+            <div class="col-3" id='result'></div>
+        </div>
+
+
+    </div>
+
+    <div class="mt-5">
+        <h1>API Call</h1>
+        <button onclick="api_call()">Execute</button>
+        <div id='api_result' class="text-success"></div>
+    </div>
+
+    <script>
+
+        var heading = document.getElementById('heading');
+        var btn = document.getElementById('btn');
+        var result = document.getElementById('result');
+
+        heading.style.color = 'black';
+
+        var form = {
+            input1: 0,
+            input2: 0
+        }
+
+        document.getElementById('input1').addEventListener('change', update);
+        document.getElementById('input2').addEventListener('change', update);
+
+        function update(ev){
+
+            form[ev.target.name] = parseFloat(ev.target.value);
+            console.log(form);
+        }
+
+        function ToggleColor() {
+            if (heading.style.color === 'black') {
+                heading.style.color = 'red';
+                btn.innerText = 'Black';
+            } else {
+                heading.style.color = 'black';
+                btn.innerText = 'Red';
+            }
+        }
+
+        function sum () {
+            console.log(form.input1)
+            console.log(form.input2)
+            let sum = form.input1 + form.input2;
+            console.log(sum);
+            result.innerText = sum;
+        }
+
+        function api_call () {
+            fetch('http://localhost:3000/train')
+                .then(res => res.json())
+                .then(res => {
+                    document.getElementById('api_result').innerText = res.title;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+
+    </script>
+
+</body>
+
+</html>
