@@ -29,10 +29,13 @@
             <div class="col-3">
                 <input placeholder="input 2" name='input2' id='input2' />
             </div>
-            <div class="col-3 text-center">
+            <div class="col-5 text-center btn-group">
                 <button class="btn btn-success" onclick="sum()">Add</button>
+                <button class="btn btn-success" onclick="subtract()">subtract</button>
+                <button class="btn btn-success" onclick="multiply()">multiply</button>
+                <button class="btn btn-success" onclick="divide()">divide</button>
             </div>
-            <div class="col-3" id='result'></div>
+            <div class="col-1" id='result'></div>
         </div>
 
 
@@ -40,7 +43,12 @@
 
     <div class="mt-5">
         <h1>API Call</h1>
-        <button onclick="api_call()">Execute</button>
+
+        <div class="row mt-5">
+            <div class="col-6"><input name='name' id='name' placeholder="Please enter your name" /></div>
+            <div class="col-6"><button class="btn btn-primary" onclick="send_name()">Send</button></div>
+        </div>
+
         <div id='api_result' class="text-success"></div>
     </div>
 
@@ -54,14 +62,15 @@
 
         var form = {
             input1: 0,
-            input2: 0
+            input2: 0,
+            operation: '',
+            name: ''
         }
 
         document.getElementById('input1').addEventListener('change', update);
         document.getElementById('input2').addEventListener('change', update);
 
         function update(ev){
-
             form[ev.target.name] = parseFloat(ev.target.value);
             console.log(form);
         }
@@ -77,22 +86,59 @@
         }
 
         function sum () {
-            console.log(form.input1)
-            console.log(form.input2)
-            let sum = form.input1 + form.input2;
-            console.log(sum);
-            result.innerText = sum;
+            form.operation = 'SUM';
+            api_call()
+        }
+
+        function subtract () {
+            form.operation = 'SUBTRACT';
+            api_call()
+        }
+
+        function multiply () {
+            form.operation = 'MULTIPLY';
+            api_call()
+        }
+
+        function divide () {
+            form.operation = 'DIVIDE';
+            api_call()
         }
 
         function api_call () {
-            fetch('http://localhost:3000/train')
+            fetch('http://localhost:3000/train', {
+                method: "POST",
+                body: JSON.stringify(form),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
                 .then(res => res.json())
                 .then(res => {
-                    document.getElementById('api_result').innerText = res.title;
+                    document.getElementById('result').innerText = res;
                 })
                 .catch(err => {
                     console.log(err);
                 });
+        }
+
+        function send_name () {
+            let value = document.getElementById('name').value;
+            fetch(`http://localhost:3000/name?name=${value}`)
+                .then(res => res.json())
+                .then(res => {
+                    console.log(res);
+                    return fetch(`http://localhost:3000/train`)
+                })
+                .then(res => res.json())
+                .then(res => {
+                    console.log(res);
+                    document.getElementById('api_result').innerText = res.name;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+
         }
 
     </script>
